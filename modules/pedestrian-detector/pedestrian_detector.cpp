@@ -1,8 +1,5 @@
 #include "pedestrian_detector.h"
 
-// TODO: make this static
-HOGDescriptor hog_;
-
 PedestrianDetector::PedestrianDetector()
 {
 	static vector<float> detector = HOGDescriptor::getDefaultPeopleDetector();
