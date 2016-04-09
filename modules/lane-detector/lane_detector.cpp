@@ -1,5 +1,33 @@
 #include "lane_detector.h"
 
+Mat LaneDetector::mask_for_elim;
+
+LaneDetector::LaneDetector(Mat image) {
+
+	Mat temp;
+	image.copyTo(temp);
+
+	for (int pi = 0; pi < temp.rows; ++pi) {
+		for (int pj = 0; pj < temp.cols; ++pj) {
+
+			temp.at<Vec3b>(pi, pj)[0] = 255;
+			temp.at<Vec3b>(pi, pj)[1] = 255;
+			temp.at<Vec3b>(pi, pj)[2] = 255;
+		}
+	}
+
+	for (int pi = 0; pi < temp.rows / 4; ++pi) {
+		for (int pj = 0; pj < temp.cols; ++pj) {
+
+			temp.at<Vec3b>(pi, pj)[0] = 0;
+			temp.at<Vec3b>(pi, pj)[1] = 0;
+			temp.at<Vec3b>(pi, pj)[2] = 0;
+		}
+	}
+
+	LaneDetector::mask_for_elim = temp;
+}
+
 Mat LaneDetector::GetWhiteMask(Mat image) {
 
 	Mat tresh_saturation,
@@ -9,7 +37,7 @@ Mat LaneDetector::GetWhiteMask(Mat image) {
 	vector<Mat> channels;
 
 	// Convert image to HSV, split it to channels
-	cvtColor(image, hsv, CV_BGR2HSV);
+	cvtColor(LaneDetector::mask_for_elim & image, hsv, CV_BGR2HSV);
 	split(hsv, channels);
 
 	// http://i.stack.imgur.com/mkq1P.png
@@ -24,17 +52,6 @@ vector<Vec4i> LaneDetector::GetLanes(Mat image) {
 	Mat red_mask = GetWhiteMask(image);
 	vector<Vec4i> lanes;
 
-	// Eliminate further traffic
-	// TODO: Time consumnig operation, find other way to do it
-	for (int pi = 0; pi < red_mask.rows / 4; ++pi) {
-		for (int pj = 0; pj < red_mask.cols; ++pj) {
-
-			red_mask.at<Vec3b>(pi, pj)[0] = 0;
-			red_mask.at<Vec3b>(pi, pj)[1] = 0;
-			red_mask.at<Vec3b>(pi, pj)[2] = 0;
-		}
-	}
-
 	erode(red_mask, red_mask, Mat(), Point(-1, -1), 1, 1, 1);
 	dilate(red_mask, red_mask, Mat(), Point(-1, -1), 2, 1, 1);
 
@@ -43,7 +60,7 @@ vector<Vec4i> LaneDetector::GetLanes(Mat image) {
 	return lanes;
 }
 
-void LaneDetector::PrintLanes(Mat image, vector<Vec4i> lanes, Scalar color, int thickness) {
+void LaneDetector::DrawLanes(Mat image, vector<Vec4i> lanes, Scalar color, int thickness) {
 
 	for (unsigned int i = 0; i < lanes.size(); ++i)
 	{
