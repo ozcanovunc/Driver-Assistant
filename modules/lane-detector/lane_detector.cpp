@@ -10,18 +10,20 @@ LaneDetector::LaneDetector(Mat image) {
 	for (int pi = 0; pi < temp.rows; ++pi) {
 		for (int pj = 0; pj < temp.cols; ++pj) {
 
-			temp.at<Vec3b>(pi, pj)[0] = 255;
-			temp.at<Vec3b>(pi, pj)[1] = 255;
-			temp.at<Vec3b>(pi, pj)[2] = 255;
-		}
-	}
-
-	for (int pi = 0; pi < temp.rows / 4; ++pi) {
-		for (int pj = 0; pj < temp.cols; ++pj) {
-
 			temp.at<Vec3b>(pi, pj)[0] = 0;
 			temp.at<Vec3b>(pi, pj)[1] = 0;
 			temp.at<Vec3b>(pi, pj)[2] = 0;
+		}
+	}
+
+	// Eliminate the car itself and the further traffic
+	// TODO: Modifications may be needed
+	for (int pi = temp.rows / 3; pi < temp.rows / 2; ++pi) {
+		for (int pj = 0; pj < temp.cols; ++pj) {
+
+			temp.at<Vec3b>(pi, pj)[0] = 255;
+			temp.at<Vec3b>(pi, pj)[1] = 255;
+			temp.at<Vec3b>(pi, pj)[2] = 255;
 		}
 	}
 
