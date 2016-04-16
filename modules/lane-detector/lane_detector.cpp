@@ -2,6 +2,8 @@
 
 Mat LaneDetector::mask_for_elim;
 
+const double LaneDetector::kLaneTresh = 0.05;
+
 LaneDetector::LaneDetector(Mat image) {
 
 	Mat temp;
@@ -30,7 +32,7 @@ LaneDetector::LaneDetector(Mat image) {
 	LaneDetector::mask_for_elim = temp;
 }
 
-Mat LaneDetector::GetWhiteMask(Mat image) {
+Mat LaneDetector::GetWhiteMask(Mat image, bool maskFlag) {
 
 	Mat tresh_saturation,
 		tresh_value,
@@ -39,7 +41,10 @@ Mat LaneDetector::GetWhiteMask(Mat image) {
 	vector<Mat> channels;
 
 	// Convert image to HSV, split it to channels
-	cvtColor(LaneDetector::mask_for_elim & image, hsv, CV_BGR2HSV);
+	if (maskFlag)
+		cvtColor(LaneDetector::mask_for_elim & image, hsv, CV_BGR2HSV);
+	else
+		cvtColor(image, hsv, CV_BGR2HSV);
 	split(hsv, channels);
 
 	// http://i.stack.imgur.com/mkq1P.png
@@ -49,9 +54,10 @@ Mat LaneDetector::GetWhiteMask(Mat image) {
 	return tresh_saturation & tresh_value;
 }
 
+
 vector<Vec4i> LaneDetector::GetLanes(Mat image) {
 
-	Mat red_mask = GetWhiteMask(image);
+	Mat red_mask = GetWhiteMask(image, true);
 	vector<Vec4i> lanes;
 
 	erode(red_mask, red_mask, Mat(), Point(-1, -1), 1, 1, 1);
@@ -66,7 +72,24 @@ void LaneDetector::DrawLanes(Mat image, vector<Vec4i> lanes, Scalar color, int t
 
 	for (unsigned int i = 0; i < lanes.size(); ++i)
 	{
-		line(image, cv::Point(lanes[i][0], lanes[i][1]), 
+		line(image, cv::Point(lanes[i][0], lanes[i][1]),
 			cv::Point(lanes[i][2], lanes[i][3]), color, thickness);
 	}
+}
+
+bool LaneDetector::IsOutOfLane(Mat image)
+{
+	Mat temp, white_mask;
+	double safety_ratio;
+	image.copyTo(temp);
+
+	temp = temp.rowRange(temp.rows * 2 / 5, temp.rows / 2);
+	temp = temp.colRange(temp.cols / 3, temp.cols * 2 / 3);
+
+	white_mask = GetWhiteMask(temp, false);
+
+	safety_ratio = (double)(countNonZero(white_mask))
+		/ (double)(white_mask.rows * white_mask.cols);
+
+	return safety_ratio > kLaneTresh;
 }
