@@ -1,5 +1,6 @@
 #include <opencv2\opencv.hpp>
 #include <iostream>
+#include <ctime>
 
 #include "modules/lane-detector/lane_detector.h"
 #include "modules/pedestrian-detector/pedestrian_detector.h"
@@ -19,14 +20,15 @@ int main(int argc, const char** argv)
 			is_distance_safe = true,
 			contains_pedestrian = false;
 
-	in = imread("1.png");
+	VideoCapture cap("video.avi");
+	cap >> in;
 
 	LaneDetector* lane_detector = new LaneDetector(in);
 	PedestrianDetector* pedestrian_detector = new PedestrianDetector();
 
 	while (true) {
 
-		in = imread("1.png");
+		cap >> in;
 
 		// Stopping Distance Calculator Module
 		is_distance_safe = StoppingDistanceCalculator::IsSafe(in);
