@@ -32,7 +32,7 @@ LaneDetector::LaneDetector(Mat image) {
 	LaneDetector::mask_for_elim = temp;
 }
 
-Mat LaneDetector::GetWhiteMask(Mat image, bool maskFlag) {
+Mat LaneDetector::GetWhiteMask(Mat image, bool apply_mask) {
 
 	Mat tresh_saturation,
 		tresh_value,
@@ -41,10 +41,13 @@ Mat LaneDetector::GetWhiteMask(Mat image, bool maskFlag) {
 	vector<Mat> channels;
 
 	// Convert image to HSV, split it to channels
-	if (maskFlag)
+	if (apply_mask) {
 		cvtColor(LaneDetector::mask_for_elim & image, hsv, CV_BGR2HSV);
-	else
+	}
+	else {
 		cvtColor(image, hsv, CV_BGR2HSV);
+	}
+
 	split(hsv, channels);
 
 	// http://i.stack.imgur.com/mkq1P.png
@@ -57,13 +60,13 @@ Mat LaneDetector::GetWhiteMask(Mat image, bool maskFlag) {
 
 vector<Vec4i> LaneDetector::GetLanes(Mat image) {
 
-	Mat red_mask = GetWhiteMask(image, true);
+	Mat white_mask = GetWhiteMask(image, true);
 	vector<Vec4i> lanes;
 
-	erode(red_mask, red_mask, Mat(), Point(-1, -1), 1, 1, 1);
-	dilate(red_mask, red_mask, Mat(), Point(-1, -1), 2, 1, 1);
+	erode(white_mask, white_mask, Mat(), Point(-1, -1), 1, 1, 1);
+	dilate(white_mask, white_mask, Mat(), Point(-1, -1), 2, 1, 1);
 
-	HoughLinesP(red_mask, lanes, 1, CV_PI / 360, 50, 50, 1);
+	HoughLinesP(white_mask, lanes, 1, CV_PI / 360, 50, 50, 1);
 
 	return lanes;
 }

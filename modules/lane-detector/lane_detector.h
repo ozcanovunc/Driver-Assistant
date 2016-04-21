@@ -18,7 +18,10 @@ public:
 private:
 	// Returns a binary image in which 
 	// 1 corresponds to white area, 0 corresponds to other colors
-	static Mat GetWhiteMask(Mat image, bool maskFlag);
+	// apply_mask flag myst be true if we are detecting lanes, false o/w
+	static Mat GetWhiteMask(Mat image, bool apply_mask);
 	static Mat mask_for_elim;
+
+	// Treshold value for checking if the vehice is in the middle of lanes
 	const static double kLaneTresh;
 };
