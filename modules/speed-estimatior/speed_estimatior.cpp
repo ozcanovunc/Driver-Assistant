@@ -32,12 +32,12 @@ Speed SpeedEstimator::GetSpeed(Mat image, int curr_frame) {
 
 	if (curr_frame % kFrameTresh == 0) {
 
-		right_lane_changes = 0;
-
-		if (right_lane_changes < 3){
+		if (right_lane_changes < 3) {
+			right_lane_changes = 0;
 			return SPD_SLOW;
 		}
 		else {
+			right_lane_changes = 0;
 			return SPD_FAST;
 		}
 	}
