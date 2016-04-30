@@ -13,7 +13,7 @@ public:
 
 private:
 	// Returns a binary mask for asphalt color
-	static Mat GetGreyMask(Mat image);
+	static Mat GetRedMask(Mat image);
 
 	// Safety treshold for stopping distance
 	const static double kSafetyTresh;

@@ -6,16 +6,14 @@ PedestrianDetector::PedestrianDetector()
 	hog_.setSVMDetector(detector);
 }
 
-// Returns true if any pedestrian has been detected
-bool PedestrianDetector::ContainsPedestrian(Mat image)
+bool PedestrianDetector::DetectPedestrians(Mat in, Mat out, Scalar color, int thickness)
 {
-	return GetBoundingRectangles(image) != vector<Rect>();
-}
+	vector<Rect> locations;
+	hog_.detectMultiScale(in, locations, 0, Size(8, 8), Size(32, 32), 1.05, 2);
 
-// Returns the bounding rectangles for detected pedestrians
-vector<Rect> PedestrianDetector::GetBoundingRectangles(Mat image)
-{
-	vector<Rect> bounding_rects;
-	hog_.detectMultiScale(image, bounding_rects, 0, Size(8, 8), Size(32, 32), 1.05, 2);
-	return bounding_rects;
+	for (int i = 0; i < locations.size(); ++i) {
+		rectangle(out, locations.at(i), color, thickness);
+	}
+
+	return !locations.empty();
 }

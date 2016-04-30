@@ -10,10 +10,8 @@ class PedestrianDetector
 {
 public:
 	PedestrianDetector();
-	// Returns true if any pedestrian has been detected
-	bool ContainsPedestrian(Mat image);
-	// Returns the bounding rectangles for detected pedestrians
-	vector<Rect> GetBoundingRectangles(Mat image);
+	// Returns true if any pedestrian has been detected and draws them into "out"
+	bool DetectPedestrians(Mat in, Mat out, Scalar color, int thickness);
 
 private:
 	HOGDescriptor hog_;
