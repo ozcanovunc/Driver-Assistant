@@ -15,7 +15,7 @@ Speed SpeedEstimator::GetSpeed(Mat image, int curr_frame) {
 		avg_lane_changes;
 
 	temp = GetWhiteMask(image);
-	temp = temp.rowRange(temp.rows * 3 / 8, temp.rows / 2);
+	temp = temp.rowRange(temp.rows * 2 / 3, temp.rows * 4 / 5);
 
 	// Get right and left lanes if exist (ROI)
 	Rect rhs(temp.cols / 2, 0, temp.cols / 2, temp.rows);
@@ -75,7 +75,6 @@ Speed SpeedEstimator::GetSpeed(Mat image, int curr_frame) {
 	else {
 		return SPD_CURR;
 	}
-
 }
 
 Mat SpeedEstimator::GetWhiteMask(Mat image) {
@@ -83,7 +82,8 @@ Mat SpeedEstimator::GetWhiteMask(Mat image) {
 	Mat tresh_saturation,
 		tresh_value,
 		hsv;
-	int sensitivity = 70;
+	int sensitivity_sat = 70,
+		sensitivity_val = 130;
 	vector<Mat> channels;
 
 	// Convert image to HSV, split it to channels
@@ -92,8 +92,8 @@ Mat SpeedEstimator::GetWhiteMask(Mat image) {
 	split(hsv, channels);
 
 	// http://i.stack.imgur.com/mkq1P.png
-	tresh_saturation = channels[1] < sensitivity;
-	tresh_value = channels[2] > 255 - sensitivity;
+	tresh_saturation = channels[1] < sensitivity_sat;
+	tresh_value = channels[2] > 255 - sensitivity_val;
 
 	return tresh_saturation & tresh_value;
 }

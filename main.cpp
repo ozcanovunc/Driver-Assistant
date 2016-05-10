@@ -26,7 +26,8 @@ int main(int argc, const char** argv)
 						is_distance_safe = true,
 						contains_pedestrian = false;
 
-	VideoCapture cap(0);
+	VideoCapture cap("1.mkv");
+	cap.set(CAP_PROP_POS_FRAMES, 10000);
 	cap >> in;
 
 	lane_detector = new LaneDetector(in);
@@ -45,18 +46,18 @@ int main(int argc, const char** argv)
 		}
 		switch (speed)
 		{
-			case SPD_SLOW:
-				putText(out, "SPEED: SLOW", Point(40, in.rows - 50), 1, 4, RED, 2);
-				break;
-			case SPD_NORMAL:
-				putText(out, "SPEED: NORMAL", Point(40, in.rows - 50), 1, 4, RED, 2);
-				break;
-			case SPD_FAST:
-				putText(out, "SPEED: FAST", Point(40, in.rows - 50), 1, 4, RED, 2);
-				// TODO: Activate vibration motor
-				break;
+		case SPD_SLOW:
+			putText(out, "SPEED: SLOW", Point(40, in.rows - 50), 1, 2, RED, 2);
+			break;
+		case SPD_NORMAL:
+			putText(out, "SPEED: NORMAL", Point(40, in.rows - 50), 1, 2, RED, 2);
+			break;
+		case SPD_FAST:
+			putText(out, "SPEED: FAST", Point(40, in.rows - 50), 1, 2, RED, 2);
+			// TODO: Activate vibration motor
+			break;
 		}
-
+#if 0
 		// Pedestrian Detector
 		if (currSpeed == SPD_FAST) {
 			contains_pedestrian = pedestrian_detector->DetectPedestrians(in, out, BLUE, 2);
@@ -64,7 +65,7 @@ int main(int argc, const char** argv)
 				// TODO: Activate vibration motor
 			}
 		}
-		
+#endif
 		// Lane Detector
 		lanes = lane_detector->GetLanes(in);
 		is_out_of_lane = lane_detector->IsOutOfLane(in);
@@ -75,11 +76,11 @@ int main(int argc, const char** argv)
 
 		// Stopping Distance Calculator
 		if (curr_frame % 20 == 0) {
-			is_distance_safe = StoppingDistanceCalculator::IsSafe(in);	
+			is_distance_safe = StoppingDistanceCalculator::IsSafe(in);
 		}
 		if (!is_distance_safe) {
 			putText(out, "DISTANCE: NOT SAFE",
-				Point(in.cols / 2 - 50, in.rows - 50), 1, 4, RED, 2);
+				Point(in.cols / 2, in.rows - 50), 1, 2, RED, 2);
 			// TODO: Activate vibration motor
 		}
 

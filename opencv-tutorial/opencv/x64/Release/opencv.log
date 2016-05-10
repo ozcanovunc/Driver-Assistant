@@ -1,8 +1,0 @@
-﻿  Source.cpp
-  traffic_sign_detector.cpp
-  Generating code
-  571 of 598 functions (95.5%) were compiled, the rest were copied from previous compilation.
-    87 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-  opencv.vcxproj -> C:\Users\ozcanovunc\documents\visual studio 2015\Projects\opencv\x64\Release\opencv.exe

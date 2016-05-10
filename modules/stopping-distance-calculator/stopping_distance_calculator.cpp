@@ -1,20 +1,24 @@
 #include "stopping_distance_calculator.h"
 
-const double StoppingDistanceCalculator::kSafetyTresh = 0;
+const double StoppingDistanceCalculator::kSafetyTresh = 0.0;
 
 bool StoppingDistanceCalculator::IsSafe(Mat image) {
 
 	Mat temp = GetRedMask(image);
 	double safety_ratio;
 
-	temp = temp.rowRange(temp.rows / 3, temp.rows / 2); // TODO: Optimize this
-	temp = temp.colRange(temp.cols * 2 / 5, temp.cols * 3 / 5);
+	temp = temp.rowRange(temp.rows / 2, temp.rows * 4 / 5);
+	temp = temp.colRange(temp.cols / 3, temp.cols * 2 / 3);
+
+	image = image.rowRange(image.rows / 2, image.rows * 4 / 5);
+	image = image.colRange(image.cols / 3, image.cols * 2 / 3);
 
 	// Number of non zero pixels / number of all pixels, percentage of red color
 	safety_ratio = (double)(countNonZero(temp))
 		/ (double)(temp.rows * temp.cols);
 
-	// If the calculated safety ratio is higher than the threshold, the distance is not safe
+	// If the calculated safety ratio is higher than the threshold, 
+	// the distance is not safe
 	return safety_ratio <= kSafetyTresh;
 }
 

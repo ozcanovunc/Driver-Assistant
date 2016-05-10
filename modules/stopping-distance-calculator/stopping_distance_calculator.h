@@ -12,7 +12,7 @@ public:
 	static bool IsSafe(Mat image);
 
 private:
-	// Returns a binary mask for asphalt color
+	// Returns a binary mask for red color
 	static Mat GetRedMask(Mat image);
 
 	// Safety treshold for stopping distance
