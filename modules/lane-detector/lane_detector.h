@@ -24,4 +24,8 @@ private:
 
 	// Treshold value for checking if the vehice is in the middle of lanes
 	const static double kLaneTresh;
+
+	// If the angle of a line is greater than kAngleTresh or less than
+	// -kAngleTresh, then the line is considered to be vertical
+	const static double kAngleTresh;
 };

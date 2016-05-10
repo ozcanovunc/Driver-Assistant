@@ -3,13 +3,14 @@
 Mat LaneDetector::mask_for_elim;
 
 const double LaneDetector::kLaneTresh = 0.05;
+const double LaneDetector::kAngleTresh = 20.0;
 
 LaneDetector::LaneDetector(Mat image) {
 
 	Mat temp;
 	image.copyTo(temp);
 
-	for (int pi = 0; pi < temp.rows; ++pi) {
+	for (int pi = 0; pi < temp.rows / 2 ; ++pi) {
 		for (int pj = 0; pj < temp.cols; ++pj) {
 
 			temp.at<Vec3b>(pi, pj)[0] = 0;
@@ -20,7 +21,7 @@ LaneDetector::LaneDetector(Mat image) {
 
 	// Eliminate the car itself and the further traffic
 	// TODO: Modifications may be needed
-	for (int pi = temp.rows / 3; pi < temp.rows / 2; ++pi) {
+	for (int pi = temp.rows / 2; pi < temp.rows; ++pi) {
 		for (int pj = 0; pj < temp.cols; ++pj) {
 
 			temp.at<Vec3b>(pi, pj)[0] = 255;
@@ -37,7 +38,8 @@ Mat LaneDetector::GetWhiteMask(Mat image, bool apply_mask) {
 	Mat tresh_saturation,
 		tresh_value,
 		hsv;
-	int sensitivity = 70;
+	int sensitivity_sat = 70,
+		sensitivity_val = 130;
 	vector<Mat> channels;
 
 	// Convert image to HSV, split it to channels
@@ -51,8 +53,8 @@ Mat LaneDetector::GetWhiteMask(Mat image, bool apply_mask) {
 	split(hsv, channels);
 
 	// http://i.stack.imgur.com/mkq1P.png
-	tresh_saturation = channels[1] < sensitivity;
-	tresh_value = channels[2] > 255 - sensitivity;
+	tresh_saturation = channels[1] < sensitivity_sat;
+	tresh_value = channels[2] > 255 - sensitivity_val;
 
 	return tresh_saturation & tresh_value;
 }
@@ -71,12 +73,20 @@ vector<Vec4i> LaneDetector::GetLanes(Mat image) {
 	return lanes;
 }
 
-void LaneDetector::DrawLanes(Mat image, vector<Vec4i> lanes, Scalar color, int thickness) {
+void LaneDetector::DrawLanes(
+	Mat image, vector<Vec4i> lanes, Scalar color, int thickness) {
 
-	for (unsigned int i = 0; i < lanes.size(); ++i)
+	double angle;
+
+	for (unsigned int li = 0; li < lanes.size(); ++li)
 	{
-		line(image, cv::Point(lanes[i][0], lanes[i][1]),
-			cv::Point(lanes[i][2], lanes[i][3]), color, thickness);
+		angle = atan2(lanes[li][3] - lanes[li][1], 
+			lanes[li][2] - lanes[li][0]) * 180.0 / CV_PI;
+		
+		if (angle < kAngleTresh && angle > -kAngleTresh) {
+			line(image, cv::Point(lanes[li][0], lanes[li][1]),
+				cv::Point(lanes[li][2], lanes[li][3]), color, thickness);
+		}
 	}
 }
 
