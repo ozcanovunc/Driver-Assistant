@@ -21,7 +21,16 @@ LaneDetector::LaneDetector(Mat image) {
 
 	// Eliminate the further traffic
 	for (int pi = temp.rows * 3 / 5; pi < temp.rows * 4 / 5; ++pi) {
-		for (int pj = 0; pj < temp.cols; ++pj) {
+		for (int pj = 0; pj < temp.cols / 3; ++pj) {
+
+			temp.at<Vec3b>(pi, pj)[0] = 255;
+			temp.at<Vec3b>(pi, pj)[1] = 255;
+			temp.at<Vec3b>(pi, pj)[2] = 255;
+		}
+	}
+
+	for (int pi = temp.rows * 3 / 5; pi < temp.rows * 4 / 5; ++pi) {
+		for (int pj = temp.cols * 2 / 3; pj < temp.cols; ++pj) {
 
 			temp.at<Vec3b>(pi, pj)[0] = 255;
 			temp.at<Vec3b>(pi, pj)[1] = 255;

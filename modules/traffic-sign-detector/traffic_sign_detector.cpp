@@ -1,5 +1,31 @@
 #include "traffic_sign_detector.h"
 
+TrafficSignDetector::TrafficSignDetector(Mat image) {
+
+	Mat temp;
+	image.copyTo(temp);
+
+	for (int pi = 0; pi < temp.rows; ++pi) {
+		for (int pj = 0; pj < temp.cols; ++pj) {
+
+			temp.at<Vec3b>(pi, pj)[0] = 0;
+			temp.at<Vec3b>(pi, pj)[1] = 0;
+			temp.at<Vec3b>(pi, pj)[2] = 0;
+		}
+	}
+
+	for (int pi = temp.rows / 3; pi < temp.rows * 2 / 3; ++pi) {
+		for (int pj = 0; pj < temp.cols; ++pj) {
+
+			temp.at<Vec3b>(pi, pj)[0] = 255;
+			temp.at<Vec3b>(pi, pj)[1] = 255;
+			temp.at<Vec3b>(pi, pj)[2] = 255;
+		}
+	}
+
+	TrafficSignDetector::mask_for_elim = temp;
+}
+
 bool TrafficSignDetector::DetectTrafficSigns(
 	Mat in, Mat out, SignColor color, Scalar rect_color, int thickness) {
 
@@ -8,10 +34,10 @@ bool TrafficSignDetector::DetectTrafficSigns(
 	bool is_sign_detected = false;
 
 	if (color == CLR_BLUE) {
-		mask = GetBlueMask(in);
+		mask = GetBlueMask(in & mask_for_elim);
 	}
 	else {
-		mask = GetRedMask(in);
+		mask = GetRedMask(in & mask_for_elim);
 	}
 
 	erode(mask, mask, Mat(), Point(-1, -1), 1, 1, 1);

@@ -16,16 +16,17 @@ using namespace cv;
 
 int main(int argc, const char** argv)
 {
-	Mat					in, out;
-	Speed				speed, currSpeed;
-	vector<Vec4i>		lanes;
-	vector<Rect>		pedestrians;
-	LaneDetector*		lane_detector;
-	PedestrianDetector* pedestrian_detector;
-	int					curr_frame = 0;
-	bool 				is_out_of_lane = false,
-						is_distance_safe = true,
-						contains_pedestrian = false;
+	Mat						in, out;
+	Speed					speed, currSpeed;
+	vector<Vec4i>				lanes;
+	vector<Rect>				pedestrians;
+	LaneDetector*				lane_detector;
+	PedestrianDetector*		pedestrian_detector;
+	TrafficSignDetector*		sign_detector;
+	int						curr_frame = 0;
+	bool 					is_out_of_lane = false,
+							is_distance_safe = true,
+							contains_pedestrian = false;
 
 	VideoCapture cap("1.mkv");
 	//cap.set(CAP_PROP_POS_FRAMES, 10000);
@@ -36,6 +37,7 @@ int main(int argc, const char** argv)
 	cap >> in;
 
 	lane_detector = new LaneDetector(in);
+	sign_detector = new TrafficSignDetector(in);
 	pedestrian_detector = new PedestrianDetector();
 	namedWindow("PROJECT", WINDOW_KEEPRATIO);
 
@@ -90,10 +92,7 @@ int main(int argc, const char** argv)
 		}
 
 		// Traffic Sign Detector
-		if (curr_frame % 20 == 1) {
-			TrafficSignDetector::DetectTrafficSigns(
-				in, out, CLR_BLUE, Scalar(0, 255, 0), 2);
-		}
+		sign_detector->DetectTrafficSigns(in, out, CLR_BLUE, BLUE, 2);
 
 		imshow("PROJECT", out);
 		waitKey(1);
