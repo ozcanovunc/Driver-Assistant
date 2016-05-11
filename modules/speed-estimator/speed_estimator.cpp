@@ -1,7 +1,7 @@
 #include "speed_estimator.h"
 
 const int SpeedEstimator::kFrameTresh = 20;
-const int SpeedEstimator::kGapTreshFast = 3; // TODO: Optimize this
+const int SpeedEstimator::kGapTreshFast = 4;
 
 Speed SpeedEstimator::GetSpeed(Mat image, int curr_frame) {
 

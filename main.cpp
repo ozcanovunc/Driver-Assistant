@@ -5,6 +5,7 @@
 #include "modules/lane-detector/lane_detector.h"
 #include "modules/pedestrian-detector/pedestrian_detector.h"
 #include "modules/stopping-distance-calculator/stopping_distance_calculator.h"
+#include "modules/traffic-sign-detector/traffic_sign_detector.h"
 
 #define RED Scalar(0, 0, 255)
 #define GREEN Scalar(0, 255, 0)
@@ -27,7 +28,11 @@ int main(int argc, const char** argv)
 						contains_pedestrian = false;
 
 	VideoCapture cap("1.mkv");
-	cap.set(CAP_PROP_POS_FRAMES, 10000);
+	//cap.set(CAP_PROP_POS_FRAMES, 10000);
+
+	// Start from 5th min
+	cap.set(CAP_PROP_POS_MSEC, 300000);
+
 	cap >> in;
 
 	lane_detector = new LaneDetector(in);
@@ -82,6 +87,12 @@ int main(int argc, const char** argv)
 			putText(out, "DISTANCE: NOT SAFE",
 				Point(in.cols / 2, in.rows - 50), 1, 2, RED, 2);
 			// TODO: Activate vibration motor
+		}
+
+		// Traffic Sign Detector
+		if (curr_frame % 20 == 1) {
+			TrafficSignDetector::DetectTrafficSigns(
+				in, out, CLR_BLUE, Scalar(0, 255, 0), 2);
 		}
 
 		imshow("PROJECT", out);
