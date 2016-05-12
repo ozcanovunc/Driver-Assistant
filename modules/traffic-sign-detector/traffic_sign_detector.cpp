@@ -14,8 +14,26 @@ TrafficSignDetector::TrafficSignDetector(Mat image) {
 		}
 	}
 
-	for (int pi = temp.rows / 3; pi < temp.rows * 2 / 3; ++pi) {
-		for (int pj = 0; pj < temp.cols; ++pj) {
+	for (int pi = temp.rows / 8; pi < temp.rows / 4; ++pi) {
+		for (int pj = temp.cols / 3; pj < temp.cols * 2 / 3; ++pj) {
+
+			temp.at<Vec3b>(pi, pj)[0] = 255;
+			temp.at<Vec3b>(pi, pj)[1] = 255;
+			temp.at<Vec3b>(pi, pj)[2] = 255;
+		}
+	}
+
+	for (int pi = temp.rows * 3 / 8; pi < temp.rows; ++pi) {
+		for (int pj = 0; pj < temp.cols / 3; ++pj) {
+
+			temp.at<Vec3b>(pi, pj)[0] = 255;
+			temp.at<Vec3b>(pi, pj)[1] = 255;
+			temp.at<Vec3b>(pi, pj)[2] = 255;
+		}
+	}
+
+	for (int pi = temp.rows * 3 / 8; pi < temp.rows; ++pi) {
+		for (int pj = temp.cols * 2 / 3; pj < temp.cols; ++pj) {
 
 			temp.at<Vec3b>(pi, pj)[0] = 255;
 			temp.at<Vec3b>(pi, pj)[1] = 255;

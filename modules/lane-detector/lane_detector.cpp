@@ -22,16 +22,7 @@ LaneDetector::LaneDetector(Mat image, int mode) {
 
 	// Eliminate the further traffic
 	for (int pi = temp.rows * 3 / 5; pi < temp.rows * 4 / 5; ++pi) {
-		for (int pj = 0; pj < temp.cols / 3; ++pj) {
-
-			temp.at<Vec3b>(pi, pj)[0] = 255;
-			temp.at<Vec3b>(pi, pj)[1] = 255;
-			temp.at<Vec3b>(pi, pj)[2] = 255;
-		}
-	}
-
-	for (int pi = temp.rows * 3 / 5; pi < temp.rows * 4 / 5; ++pi) {
-		for (int pj = temp.cols * 2 / 3; pj < temp.cols; ++pj) {
+		for (int pj = 0; pj < temp.cols; ++pj) {
 
 			temp.at<Vec3b>(pi, pj)[0] = 255;
 			temp.at<Vec3b>(pi, pj)[1] = 255;
@@ -55,6 +46,10 @@ Mat LaneDetector::GetWhiteMask(Mat image, bool apply_mask) {
 	if (LaneDetector::kMode == 0) {
 		sensitivity_sat = 70;
 		sensitivity_val = 130;
+	}
+	else if (LaneDetector::kMode == 1){
+		sensitivity_sat = 70;
+		sensitivity_val = 115;
 	}
 	else {
 		sensitivity_sat = 70;

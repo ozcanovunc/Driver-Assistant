@@ -90,6 +90,10 @@ Mat SpeedEstimator::GetWhiteMask(Mat image, int mode) {
 		sensitivity_sat = 70;
 		sensitivity_val = 130;
 	}
+	else if (mode == 1) {
+		sensitivity_sat = 70;
+		sensitivity_val = 115;
+	}
 	else {
 		sensitivity_sat = 70;
 		sensitivity_val = 70;

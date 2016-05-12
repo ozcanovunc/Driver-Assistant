@@ -11,7 +11,8 @@ class LaneDetector
 public:
 	// Initialize with a sample image
 	// Mode: 0 -> If the video quality is low
-	// Mode: 1 -> If the video quality is high
+	// Mode: 1 -> If the video quality is middle
+	// Mode: 2 -> If the video quality is high
 	LaneDetector(Mat image, int mode);
 	static bool IsOutOfLane(Mat image);
 	static vector<Vec4i> GetLanes(Mat image);

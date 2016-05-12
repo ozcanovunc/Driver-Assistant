@@ -11,6 +11,9 @@ enum Speed { SPD_SLOW, SPD_NORMAL, SPD_FAST, SPD_CURR };
 class SpeedEstimator
 {
 public:
+	// Mode: 0 -> If the video quality is low
+	// Mode: 1 -> If the video quality is middle
+	// Mode: 2 -> If the video quality is high
 	static Speed GetSpeed(Mat image, int curr_frame, int mode);
 
 private:

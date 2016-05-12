@@ -25,14 +25,10 @@ int main(int argc, const char** argv)
 	TrafficSignDetector*	sign_detector;
 	int						curr_frame = 0;
 	bool 					is_out_of_lane = false,
-							is_distance_safe = true,
-							contains_pedestrian = false;
+		is_distance_safe = true,
+		contains_pedestrian = false;
 
-	VideoCapture cap("1.mkv");
-	//cap.set(CAP_PROP_POS_FRAMES, 10000);
-
-	// Start from 5th min
-	cap.set(CAP_PROP_POS_MSEC, 300000);
+	VideoCapture cap(0);
 	cap >> in;
 
 	lane_detector = new LaneDetector(in, atoi(argv[1]));
@@ -75,7 +71,7 @@ int main(int argc, const char** argv)
 		// Lane Detector
 		lanes = lane_detector->GetLanes(in);
 		is_out_of_lane = lane_detector->IsOutOfLane(in);
-		lane_detector->DrawLanes(out, lanes, GREEN, 3);
+		lane_detector->DrawLanes(out, lanes, GREEN, 10);
 		if (is_out_of_lane) {
 			// TODO: Activate vibration motor
 		}
