@@ -11,6 +11,8 @@
 #define GREEN Scalar(0, 255, 0)
 #define BLUE Scalar(255, 0, 0)
 
+#define VIDEO_RATIO 0.4
+
 using namespace std;
 using namespace cv;
 
@@ -30,6 +32,7 @@ int main(int argc, const char** argv)
 
 	VideoCapture cap(0);
 	cap >> in;
+	resize(in, in, Size(), VIDEO_RATIO, VIDEO_RATIO, INTER_AREA);
 
 	lane_detector = new LaneDetector(in, atoi(argv[1]));
 	sign_detector = new TrafficSignDetector(in);
@@ -39,6 +42,7 @@ int main(int argc, const char** argv)
 	while (true) {
 
 		cap >> in;
+		resize(in, in, Size(), VIDEO_RATIO, VIDEO_RATIO, INTER_AREA);
 		in.copyTo(out);
 
 		// Speed Estimator
@@ -49,13 +53,13 @@ int main(int argc, const char** argv)
 		switch (speed)
 		{
 		case SPD_SLOW:
-			putText(out, "SPEED: SLOW", Point(40, in.rows - 50), 1, 2, RED, 2);
+			putText(out, "SPD: SLOW", Point(40, in.rows - 50), 1, 2, RED, 2);
 			break;
 		case SPD_NORMAL:
-			putText(out, "SPEED: NORMAL", Point(40, in.rows - 50), 1, 2, RED, 2);
+			putText(out, "SPD: NORMAL", Point(40, in.rows - 50), 1, 2, RED, 2);
 			break;
 		case SPD_FAST:
-			putText(out, "SPEED: FAST", Point(40, in.rows - 50), 1, 2, RED, 2);
+			putText(out, "SPD: FAST", Point(40, in.rows - 50), 1, 2, RED, 2);
 			// TODO: Activate vibration motor
 			break;
 		}
@@ -71,7 +75,7 @@ int main(int argc, const char** argv)
 		// Lane Detector
 		lanes = lane_detector->GetLanes(in);
 		is_out_of_lane = lane_detector->IsOutOfLane(in);
-		lane_detector->DrawLanes(out, lanes, GREEN, 10);
+		lane_detector->DrawLanes(out, lanes, GREEN, 7);
 		if (is_out_of_lane) {
 			// TODO: Activate vibration motor
 		}
@@ -81,7 +85,7 @@ int main(int argc, const char** argv)
 			is_distance_safe = StoppingDistanceCalculator::IsSafe(in);
 		}
 		if (!is_distance_safe) {
-			putText(out, "DISTANCE: NOT SAFE",
+			putText(out, "DIST: NOT SAFE",
 				Point(in.cols / 2, in.rows - 50), 1, 2, RED, 2);
 			// TODO: Activate vibration motor
 		}
