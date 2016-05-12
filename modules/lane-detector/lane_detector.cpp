@@ -1,11 +1,12 @@
 #include "lane_detector.h"
 
 Mat LaneDetector::mask_for_elim;
+int LaneDetector::kMode;
 
 const double LaneDetector::kLaneTresh = 0.05;
 const double LaneDetector::kAngleTresh = 20.0;
 
-LaneDetector::LaneDetector(Mat image) {
+LaneDetector::LaneDetector(Mat image, int mode) {
 
 	Mat temp;
 	image.copyTo(temp);
@@ -39,6 +40,7 @@ LaneDetector::LaneDetector(Mat image) {
 	}
 
 	LaneDetector::mask_for_elim = temp;
+	LaneDetector::kMode = mode;
 }
 
 Mat LaneDetector::GetWhiteMask(Mat image, bool apply_mask) {
@@ -46,9 +48,18 @@ Mat LaneDetector::GetWhiteMask(Mat image, bool apply_mask) {
 	Mat tresh_saturation,
 		tresh_value,
 		hsv;
-	int sensitivity_sat = 70,
-		sensitivity_val = 130;
+	int sensitivity_sat,
+		sensitivity_val;
 	vector<Mat> channels;
+
+	if (LaneDetector::kMode == 0) {
+		sensitivity_sat = 70;
+		sensitivity_val = 130;
+	}
+	else {
+		sensitivity_sat = 70;
+		sensitivity_val = 70;
+	}
 
 	// Convert image to HSV, split it to channels
 	if (apply_mask) {

@@ -18,11 +18,11 @@ int main(int argc, const char** argv)
 {
 	Mat						in, out;
 	Speed					speed, currSpeed;
-	vector<Vec4i>				lanes;
-	vector<Rect>				pedestrians;
-	LaneDetector*				lane_detector;
+	vector<Vec4i>			lanes;
+	vector<Rect>			pedestrians;
+	LaneDetector*			lane_detector;
 	PedestrianDetector*		pedestrian_detector;
-	TrafficSignDetector*		sign_detector;
+	TrafficSignDetector*	sign_detector;
 	int						curr_frame = 0;
 	bool 					is_out_of_lane = false,
 							is_distance_safe = true,
@@ -33,10 +33,9 @@ int main(int argc, const char** argv)
 
 	// Start from 5th min
 	cap.set(CAP_PROP_POS_MSEC, 300000);
-
 	cap >> in;
 
-	lane_detector = new LaneDetector(in);
+	lane_detector = new LaneDetector(in, atoi(argv[1]));
 	sign_detector = new TrafficSignDetector(in);
 	pedestrian_detector = new PedestrianDetector();
 	namedWindow("PROJECT", WINDOW_KEEPRATIO);
@@ -47,7 +46,7 @@ int main(int argc, const char** argv)
 		in.copyTo(out);
 
 		// Speed Estimator
-		currSpeed = SpeedEstimator::GetSpeed(in, curr_frame++);
+		currSpeed = SpeedEstimator::GetSpeed(in, curr_frame++, atoi(argv[1]));
 		if (currSpeed != SPD_CURR) {
 			speed = currSpeed;
 		}

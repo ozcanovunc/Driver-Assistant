@@ -3,7 +3,7 @@
 const int SpeedEstimator::kFrameTresh = 20;
 const int SpeedEstimator::kGapTreshFast = 4;
 
-Speed SpeedEstimator::GetSpeed(Mat image, int curr_frame) {
+Speed SpeedEstimator::GetSpeed(Mat image, int curr_frame, int mode) {
 
 	Mat temp, left_lane, right_lane;
 	static int right_lane_changes = 0;
@@ -14,7 +14,7 @@ Speed SpeedEstimator::GetSpeed(Mat image, int curr_frame) {
 	int non_zero_pixels,
 		avg_lane_changes;
 
-	temp = GetWhiteMask(image);
+	temp = GetWhiteMask(image, mode);
 	temp = temp.rowRange(temp.rows * 2 / 3, temp.rows * 4 / 5);
 
 	// Get right and left lanes if exist (ROI)
@@ -77,14 +77,23 @@ Speed SpeedEstimator::GetSpeed(Mat image, int curr_frame) {
 	}
 }
 
-Mat SpeedEstimator::GetWhiteMask(Mat image) {
+Mat SpeedEstimator::GetWhiteMask(Mat image, int mode) {
 
 	Mat tresh_saturation,
 		tresh_value,
 		hsv;
-	int sensitivity_sat = 70,
-		sensitivity_val = 130;
+	int sensitivity_sat,
+		sensitivity_val;
 	vector<Mat> channels;
+
+	if (mode == 0) {
+		sensitivity_sat = 70;
+		sensitivity_val = 130;
+	}
+	else {
+		sensitivity_sat = 70;
+		sensitivity_val = 70;
+	}
 
 	// Convert image to HSV, split it to channels
 	cvtColor(image, hsv, CV_BGR2HSV);

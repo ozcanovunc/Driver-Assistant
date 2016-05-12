@@ -10,7 +10,9 @@ class LaneDetector
 {
 public:
 	// Initialize with a sample image
-	LaneDetector(Mat image);
+	// Mode: 0 -> If the video quality is low
+	// Mode: 1 -> If the video quality is high
+	LaneDetector(Mat image, int mode);
 	static bool IsOutOfLane(Mat image);
 	static vector<Vec4i> GetLanes(Mat image);
 	static void DrawLanes(Mat image, vector<Vec4i> lanes, Scalar color, int thickness);
@@ -28,4 +30,6 @@ private:
 	// If the angle of a line is greater than kAngleTresh or less than
 	// -kAngleTresh, then the line is considered to be vertical
 	const static double kAngleTresh;
+
+	static int kMode;
 };

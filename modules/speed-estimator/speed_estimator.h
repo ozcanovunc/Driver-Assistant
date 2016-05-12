@@ -11,10 +11,10 @@ enum Speed { SPD_SLOW, SPD_NORMAL, SPD_FAST, SPD_CURR };
 class SpeedEstimator
 {
 public:
-	static Speed GetSpeed(Mat image, int curr_frame);
+	static Speed GetSpeed(Mat image, int curr_frame, int mode);
 
 private:
-	static Mat GetWhiteMask(Mat image);
+	static Mat GetWhiteMask(Mat image, int mode);
 
 	/* 
 		Number of frames needed in order to estimate the speed of the vehicle
