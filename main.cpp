@@ -7,6 +7,8 @@
 #include "modules/stopping-distance-calculator/stopping_distance_calculator.h"
 #include "modules/traffic-sign-detector/traffic_sign_detector.h"
 
+#include "rpi3.h"
+
 #define RED Scalar(0, 0, 255)
 #define GREEN Scalar(0, 255, 0)
 #define BLUE Scalar(255, 0, 0)
@@ -30,6 +32,9 @@ int main(int argc, const char** argv)
 		is_distance_safe = true,
 		contains_pedestrian = false;
 
+	// Vibration motor
+	hardwareSetup();
+	
 	VideoCapture cap(0);
 	cap >> in;
 	resize(in, in, Size(), VIDEO_RATIO, VIDEO_RATIO, INTER_AREA);
@@ -60,7 +65,7 @@ int main(int argc, const char** argv)
 			break;
 		case SPD_FAST:
 			putText(out, "SPD: FAST", Point(40, in.rows - 50), 1, 2, RED, 2);
-			// TODO: Activate vibration motor
+			vibrationStateChange(1);
 			break;
 		}
 #if 0
@@ -68,7 +73,7 @@ int main(int argc, const char** argv)
 		if (currSpeed == SPD_FAST) {
 			contains_pedestrian = pedestrian_detector->DetectPedestrians(in, out, BLUE, 2);
 			if (contains_pedestrian) {
-				// TODO: Activate vibration motor
+				vibrationStateChange(1);
 			}
 		}
 #endif
@@ -77,7 +82,7 @@ int main(int argc, const char** argv)
 		is_out_of_lane = lane_detector->IsOutOfLane(in);
 		lane_detector->DrawLanes(out, lanes, GREEN, 7);
 		if (is_out_of_lane) {
-			// TODO: Activate vibration motor
+			vibrationStateChange(1);
 		}
 
 		// Stopping Distance Calculator
@@ -87,7 +92,7 @@ int main(int argc, const char** argv)
 		if (!is_distance_safe) {
 			putText(out, "DIST: NOT SAFE",
 				Point(in.cols / 2, in.rows - 50), 1, 2, RED, 2);
-			// TODO: Activate vibration motor
+			vibrationStateChange(1);
 		}
 
 		// Traffic Sign Detector
@@ -95,6 +100,7 @@ int main(int argc, const char** argv)
 
 		imshow("PROJECT", out);
 		waitKey(1);
+		reset();
 	}
 
 	return 0;
