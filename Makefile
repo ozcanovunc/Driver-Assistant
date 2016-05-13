@@ -2,6 +2,7 @@ CC = g++
 CFLAGS = -g -Wall -I/usr/local/include/opencv -I/usr/local/include 
 
 SRC = main.cpp \
+rpi3.c \
 modules/lane-detector/lane_detector.cpp \
 modules/pedestrian-detector/pedestrian_detector.cpp \
 modules/stopping-distance-calculator/stopping_distance_calculator.cpp \
