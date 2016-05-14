@@ -1,27 +1,14 @@
 #include "lane_detector.h"
 
-Mat LaneDetector::mask_for_elim;
-int LaneDetector::kMode;
-
 const double LaneDetector::kLaneTresh = 0.05;
 const double LaneDetector::kAngleTresh = 20.0;
 
 LaneDetector::LaneDetector(Mat image, int mode) {
 
-	Mat temp;
-	image.copyTo(temp);
+	Mat temp = Mat::zeros(image.rows, image.cols, image.type());
 
-	for (int pi = 0; pi < temp.rows; ++pi) {
-		for (int pj = 0; pj < temp.cols; ++pj) {
-
-			temp.at<Vec3b>(pi, pj)[0] = 0;
-			temp.at<Vec3b>(pi, pj)[1] = 0;
-			temp.at<Vec3b>(pi, pj)[2] = 0;
-		}
-	}
-
-	// Eliminate the further traffic
-	for (int pi = temp.rows * 3 / 5; pi < temp.rows * 4 / 5; ++pi) {
+	// Search for lanes in rows between %40 and %80
+	for (int pi = temp.rows * 2 / 5; pi < temp.rows * 4 / 5; ++pi) {
 		for (int pj = 0; pj < temp.cols; ++pj) {
 
 			temp.at<Vec3b>(pi, pj)[0] = 255;
@@ -30,24 +17,24 @@ LaneDetector::LaneDetector(Mat image, int mode) {
 		}
 	}
 
-	LaneDetector::mask_for_elim = temp;
-	LaneDetector::kMode = mode;
+	this->mask_for_elim_ = temp;
+	this->mode_ = mode;
 }
 
 Mat LaneDetector::GetWhiteMask(Mat image, bool apply_mask) {
 
-	Mat tresh_saturation,
-		tresh_value,
-		hsv;
-	int sensitivity_sat,
-		sensitivity_val;
+	Mat			tresh_saturation,
+				tresh_value,
+				hsv;
 	vector<Mat> channels;
+	int			sensitivity_sat,
+				sensitivity_val;
 
-	if (LaneDetector::kMode == 0) {
+	if (this->mode_ == 0) {
 		sensitivity_sat = 70;
 		sensitivity_val = 130;
 	}
-	else if (LaneDetector::kMode == 1){
+	else if (this->mode_ == 1) {
 		sensitivity_sat = 70;
 		sensitivity_val = 115;
 	}
@@ -58,7 +45,7 @@ Mat LaneDetector::GetWhiteMask(Mat image, bool apply_mask) {
 
 	// Convert image to HSV, split it to channels
 	if (apply_mask) {
-		cvtColor(LaneDetector::mask_for_elim & image, hsv, CV_BGR2HSV);
+		cvtColor(this->mask_for_elim_ & image, hsv, CV_BGR2HSV);
 	}
 	else {
 		cvtColor(image, hsv, CV_BGR2HSV);
@@ -75,7 +62,7 @@ Mat LaneDetector::GetWhiteMask(Mat image, bool apply_mask) {
 
 vector<Vec4i> LaneDetector::GetLanes(Mat image) {
 
-	Mat white_mask = GetWhiteMask(image, true);
+	Mat white_mask = this->GetWhiteMask(image, true);
 	vector<Vec4i> lanes;
 
 	erode(white_mask, white_mask, Mat(), Point(-1, -1), 1, 1, 1);
@@ -90,14 +77,15 @@ void LaneDetector::DrawLanes(
 
 	double angle;
 
+	// Eliminate some of the lanes which are not vertical
 	for (unsigned int li = 0; li < lanes.size(); ++li)
 	{
 		angle = atan2(lanes[li][3] - lanes[li][1], 
 			lanes[li][2] - lanes[li][0]) * 180.0 / CV_PI;
 		
 		if (angle > kAngleTresh || angle < -kAngleTresh) {
-			line(image, cv::Point(lanes[li][0], lanes[li][1]),
-				cv::Point(lanes[li][2], lanes[li][3]), color, thickness);
+			line(image, Point(lanes[li][0], lanes[li][1]), 
+				Point(lanes[li][2], lanes[li][3]), color, thickness);
 		}
 	}
 }

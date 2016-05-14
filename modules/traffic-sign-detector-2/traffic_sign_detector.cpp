@@ -77,10 +77,6 @@ vector<Rect> TrafficSignDetector::GetRedTrafficSigns(Mat image) {
 	return detected_signs;
 }
 
-vector<Rect> TrafficSignDetector::GetBlueTrafficSigns(Mat image) {
-
-}
-
 Mat TrafficSignDetector::GetRedMask(Mat image) {
 
 	// Hue and sturation tresholds
@@ -101,8 +97,4 @@ Mat TrafficSignDetector::GetRedMask(Mat image) {
 	tresh_saturation = channels[1] > 50;
 
 	return (tresh_hue_fst | tresh_hue_snd) & tresh_saturation;
-}
-
-Mat TrafficSignDetector::GetBlueMask(Mat image) {
-
 }

@@ -6,11 +6,14 @@ const int SpeedEstimator::kGapTreshFast = 4;
 Speed SpeedEstimator::GetSpeed(Mat image, int curr_frame, int mode) {
 
 	Mat temp, left_lane, right_lane;
+
 	static int right_lane_changes = 0;
 	static int left_lane_changes = 0;
+
 	// Variable for checking if last frame contains lane
 	static bool right_lane_exists = true;
 	static bool left_lane_exists = true;
+
 	int non_zero_pixels,
 		avg_lane_changes;
 
@@ -51,10 +54,6 @@ Speed SpeedEstimator::GetSpeed(Mat image, int curr_frame, int mode) {
 
 		avg_lane_changes = right_lane_changes > left_lane_changes ? 
 			right_lane_changes : left_lane_changes;
-
-#if DEBUG
-		cout << avg_lane_changes << endl;
-#endif
 
 		if (avg_lane_changes == 0) {
 			right_lane_changes = 0;

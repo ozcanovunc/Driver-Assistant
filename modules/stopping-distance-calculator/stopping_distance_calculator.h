@@ -9,11 +9,13 @@ using namespace cv;
 class StoppingDistanceCalculator
 {
 public:
-	static bool IsSafe(Mat image);
+	bool IsSafe(Mat image);
 
 private:
-	static Mat GetRedMask(Mat image);
+	Mat GetRedMask(Mat image);
 
-	// Safety treshold for stopping distance
+	/*
+	 *	Safety treshold for stopping distance
+	 */
 	const static double kSafetyTresh;
 };

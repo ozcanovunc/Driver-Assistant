@@ -18,7 +18,7 @@ void hardwareSetup(){
 }
 
 // Drive motor via gpio output signal
-int vibrMtrController(int motor_state){
+int vibrationStateChange(int motor_state){
 	if(motor_state == 0){
 		digitalWrite(VIBR_MTR_01,0);
 		digitalWrite(VIBR_MTR_02,0);		
