@@ -6,7 +6,7 @@
 #include "modules/stopping-distance-calculator/stopping_distance_calculator.h"
 #include "modules/traffic-sign-detector/traffic_sign_detector.h"
 
-//#define VIBRATION_MOTOR
+#define VIBRATION_MOTOR
 //#define DETECT_PEDESTRIANS
 
 #ifdef VIBRATION_MOTOR
@@ -118,7 +118,7 @@ int main(int argc, const char** argv)
 		waitKey(1);
 
 #ifdef VIBRATION_MOTOR
-		//reset();
+		reset();
 #endif
 
 	} // Infinite loop
